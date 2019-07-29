@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from 'react'
+import './index.css'
+import TodoItem from './TodoItem'
 
 class TodoList extends Component {
   constructor(props) {
@@ -8,22 +10,37 @@ class TodoList extends Component {
       list: []
     }
     this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleButtonClick = this.handleButtonClick.bind(this)
   }
 
   render() {
     return (
       <Fragment>
         <div>
+          <label htmlFor="insertArea">输入内容</label>
           <input
+            id="insertArea"
+            className="input"
             type="text"
             value={this.state.inputValue}
             onChange={this.handleInputChange}
           />
-          <button>提交</button>
+          <button onClick={this.handleButtonClick}>提交</button>
         </div>
         <ul>
-          <li>学英语</li>
-          <li>学习React</li>
+          {
+            this.state.list.map((item, index) => {
+              return (
+                <div key={index}>
+                  <TodoItem
+                    content={item}
+                    index={index}
+                    deleteItem={this.handleItemDelete}
+                  />
+                </div>
+              )
+            })
+          }
         </ul>
       </Fragment>
     )
@@ -32,6 +49,22 @@ class TodoList extends Component {
   handleInputChange(e) {
     this.setState({
       inputValue: e.target.value
+    })
+  }
+
+  handleButtonClick() {
+    const { list, inputValue } = this.state
+    this.setState({
+      list: [...list, inputValue],
+      inputValue: ''
+    })
+  }
+
+  handleItemDelete(i) {
+    const list = [...this.state.list]
+    list.splice(i, 1)
+    this.setState({
+      list
     })
   }
 }
