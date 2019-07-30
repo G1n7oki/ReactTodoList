@@ -1,21 +1,29 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
 class TodoItem extends Component {
   constructor(props) {
     super(props)
-    console.log(props)
     this.handleClick = this.handleClick.bind(this)
   }
 
   render() {
+    const { content } = this.props
     return (
-      <li onClick={this.handleClick}>{ this.props.content }</li>
+      <li onClick={this.handleClick}>{ content }</li>
     )
   }
 
   handleClick() {
-    this.props.deleteItem(this.props.index)
+    const { deleteItem, index } = this.props
+    deleteItem(index)
   }
+}
+
+TodoItem.propsTypes = {
+  content: PropTypes.string,
+  deleteItem: PropTypes.func,
+  index: PropTypes.number
 }
 
 export default TodoItem
