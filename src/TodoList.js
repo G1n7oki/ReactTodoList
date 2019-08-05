@@ -1,6 +1,8 @@
-import React, { Component, Fragment } from 'react'
-import { Input, Button, List } from 'antd'
+import React, { Component } from 'react'
 import store from './store'
+import { getInputChangeAction, getAddItemAction, getDeleteItemAction, getListData } from './store/action'
+import TodoListUI from './TodoListUI'
+import axios from 'axios'
 import 'antd/dist/antd.css'
 
 class TodoList extends Component {
@@ -10,42 +12,33 @@ class TodoList extends Component {
     this.handleInputChange = this.handleInputChange.bind(this)
     this.hanleStoreChange = this.hanleStoreChange.bind(this)
     this.handleBtnClick = this.handleBtnClick.bind(this)
-    // this.handleDelete = this.handleDelete.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
     store.subscribe(this.hanleStoreChange)
   }
 
   render() {
     const { inputValue, list } = this.state
     return (
-      <Fragment>
-        <div style={{marginTop: '10px', marginLeft: '10px'}}>
-          <Input
-            value={inputValue}
-            placeholder="todo info"
-            style={{width: '300px', marginRight: '10px'}}
-            onChange={this.handleInputChange}
-          />
-          <Button type="primary" onClick={this.handleBtnClick}>提交</Button>
-          <List
-            style={{width: '300px', marginTop: '10px'}}
-            bordered
-            dataSource={list}
-            renderItem={(item, index) => (
-              <List.Item onClick={this.handleDelete.bind(this, index)}>
-                {item}
-              </List.Item>
-            )}
-          />
-        </div>
-      </Fragment>
+      <TodoListUI
+        inputValue={inputValue}
+        list={list}
+        handleInputChange={this.handleInputChange}
+        handleBtnClick={this.handleBtnClick}
+        handleDelete={this.handleDelete}
+      />
     )
   }
 
+  componentDidMount() {
+    axios.get(' https://www.easy-mock.com/mock/5d47ce6fcf23b172c02d7ff0/JianShu/TodoList').then(res => {
+      const data = res.data.data
+      const action = getListData(data)
+      store.dispatch(action)
+    })
+  }
+
   handleInputChange(e) {
-    const action = {
-      type: 'change_input_value',
-      value: e.target.value
-    }
+    const action = getInputChangeAction(e.target.value)
     store.dispatch(action)
   }
 
@@ -54,17 +47,12 @@ class TodoList extends Component {
   }
 
   handleBtnClick() {
-    const action = {
-      type: 'add_todo_item'
-    }
+    const action = getAddItemAction()
     store.dispatch(action)
   }
 
   handleDelete(i) {
-    const action = {
-      type: 'delete_todo_item',
-      value: i
-    }
+    const action = getDeleteItemAction(i)
     store.dispatch(action)
   }
 }
