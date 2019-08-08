@@ -14,7 +14,7 @@ export const getDeleteItemAction = (i) => ({
   value: i
 })
 
-export const getListData = (data) => ({
+export const getInitList = (data) => ({
   type: INIT_LIST_DATA,
   data
 })
